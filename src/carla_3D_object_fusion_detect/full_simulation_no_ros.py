@@ -32,7 +32,7 @@ spawn_point = random.choice(world.get_map().get_spawn_points())
 vehicle = world.spawn_actor(vehicle_bp, spawn_point)
 print("✅ 车辆生成成功!")
 
-# 开启自动驾驶，不依赖任何第三方库
+# 开启自动驾驶
 vehicle.set_autopilot(True)
 print("✅ 车辆已开启 Carla 原生自动驾驶!")
 
