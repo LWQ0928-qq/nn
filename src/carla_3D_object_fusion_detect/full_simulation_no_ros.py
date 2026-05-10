@@ -5,9 +5,9 @@ import os
 import cv2
 import numpy as np
 
-# 1. 创建保存目录
-os.makedirs("./output/images", exist_ok=True)
-os.makedirs("./output/lidar", exist_ok=True)
+# 1. 创建保存目录（已修改为 D:\jiqi_study）
+os.makedirs("D:/jiqi_study/images", exist_ok=True)
+os.makedirs("D:/jiqi_study/lidar", exist_ok=True)
 
 # 2. 连接 Carla 服务器
 client = carla.Client('localhost', 2000)
@@ -61,22 +61,22 @@ def process_camera_image(image):
     img = np.array(image.raw_data)
     img = img.reshape((image.height, image.width, 4))
     img = img[:, :, :3]
-    # 保存图片
-    cv2.imwrite(f'./output/images/camera_{image.frame:06d}.png', img)
+    # 保存图片到 D:\jiqi_study\images
+    cv2.imwrite(f'D:/jiqi_study/images/camera_{image.frame:06d}.png', img)
     # 显示画面
     cv2.imshow("Camera", img)
     cv2.waitKey(1)
 
 def process_lidar_data(point_cloud):
-    # 保存点云数据
-    point_cloud.save_to_disk(f'./output/lidar/lidar_{point_cloud.frame:06d}.ply')
+    # 保存点云数据到 D:\jiqi_study\lidar
+    point_cloud.save_to_disk(f'D:/jiqi_study/lidar/lidar_{point_cloud.frame:06d}.ply')
 
 # 监听传感器数据
 camera.listen(process_camera_image)
 lidar.listen(process_lidar_data)
 
 # 7. 保持运行，按 Ctrl+C 退出
-print("\n🚗 仿真已启动，车辆正在雨天自动行驶，传感器数据将保存到 ./output 文件夹...")
+print("\n🚗 仿真已启动，车辆正在雨天自动行驶，传感器数据将保存到 D:\\jiqi_study 文件夹...")
 print("按 Ctrl+C 停止仿真")
 
 try:
