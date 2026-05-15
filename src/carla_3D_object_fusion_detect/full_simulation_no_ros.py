@@ -4,17 +4,35 @@ import random
 import os
 import cv2
 import numpy as np
+import threading
 
-# 1. 创建保存目录（已修改为 D:\jiqi_study）
-os.makedirs("D:/jiqi_study/images", exist_ok=True)
-os.makedirs("D:/jiqi_study/lidar", exist_ok=True)
+# ====================== 保存到【上3级目录】 ======================
+current_file = os.path.abspath(__file__)
+current_dir = os.path.dirname(current_file)
+p1 = os.path.dirname(current_dir)
+p2 = os.path.dirname(p1)
+p3 = os.path.dirname(p2)
 
-# 2. 连接 Carla 服务器
+image_folder = os.path.join(p3, "images")
+lidar_folder = os.path.join(p3, "lidar")
+os.makedirs(image_folder, exist_ok=True)
+os.makedirs(lidar_folder, exist_ok=True)
+
+# ====================== 5分钟保存一次 ======================
+SAVE_INTERVAL = 5 * 60
+last_save_time = time.time()
+latest_image = None
+latest_lidar = None
+
+# 退出控制
+stop_thread = False
+
+# ====================== 连接 CARLA ======================
 client = carla.Client('localhost', 2000)
-client.set_timeout(10.0)
+client.set_timeout(5.0)
 world = client.get_world()
 
-# 3. 设置雨天天气
+# ====================== 雨天天气 ======================
 weather = carla.WeatherParameters(
     cloudiness=90.0,
     precipitation=90.0,
@@ -23,70 +41,96 @@ weather = carla.WeatherParameters(
     wetness=90.0
 )
 world.set_weather(weather)
-print("✅ 雨天天气已设置成功!")
+print("✅ 雨天天气已设置")
 
-# 4. 生成车辆并开启 Carla 原生自动驾驶
+# ====================== 生成车辆 ======================
 blueprint_library = world.get_blueprint_library()
-vehicle_bp = blueprint_library.filter('model3')[0]
+vehicle_bp = blueprint_library.filter('vehicle.tesla.model3')[0]
 spawn_point = random.choice(world.get_map().get_spawn_points())
 vehicle = world.spawn_actor(vehicle_bp, spawn_point)
-print("✅ 车辆生成成功!")
-
-# 开启自动驾驶
+if vehicle is None:
+    raise RuntimeError("车辆生成失败！请检查 spawn point 是否有效")
 vehicle.set_autopilot(True)
-print("✅ 车辆已开启 Carla 原生自动驾驶!")
+print("✅ 车辆生成并开启自动驾驶!")
 
-# 5. 挂载相机和激光雷达（和项目多传感器逻辑对齐）
-# RGB 相机
-camera_bp = blueprint_library.find('sensor.camera.rgb')
-camera_bp.set_attribute('image_size_x', '800')
-camera_bp.set_attribute('image_size_y', '600')
-camera_bp.set_attribute('fov', '110')
-camera_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
-camera = world.spawn_actor(camera_bp, camera_transform, attach_to=vehicle)
-print("✅ RGB 相机挂载成功!")
+# ====================== 挂载相机 ======================
+cam_bp = blueprint_library.find('sensor.camera.rgb')
+cam_bp.set_attribute('image_size_x', '800')
+cam_bp.set_attribute('image_size_y', '600')
+cam_bp.set_attribute('fov', '110')
+camera = world.spawn_actor(
+    cam_bp,
+    carla.Transform(carla.Location(x=1.5, z=2.4)),
+    attach_to=vehicle
+)
 
-# 激光雷达
+# ====================== 挂载激光雷达 ======================
 lidar_bp = blueprint_library.find('sensor.lidar.ray_cast')
 lidar_bp.set_attribute('range', '100')
 lidar_bp.set_attribute('points_per_second', '100000')
 lidar_bp.set_attribute('rotation_frequency', '10')
-lidar_transform = carla.Transform(carla.Location(x=0, z=2.5))
-lidar = world.spawn_actor(lidar_bp, lidar_transform, attach_to=vehicle)
-print("✅ 激光雷达挂载成功!")
+lidar = world.spawn_actor(
+    lidar_bp,
+    carla.Transform(carla.Location(x=0, z=2.5)),
+    attach_to=vehicle
+)
 
-# 6. 定义传感器回调，保存数据并简单可视化
-def process_camera_image(image):
-    # 转换为OpenCV格式
-    img = np.array(image.raw_data)
-    img = img.reshape((image.height, image.width, 4))
-    img = img[:, :, :3]
-    # 保存图片到 D:\jiqi_study\images
-    cv2.imwrite(f'D:/jiqi_study/images/camera_{image.frame:06d}.png', img)
-    # 显示画面
-    cv2.imshow("Camera", img)
-    cv2.waitKey(1)
+print("✅ 相机与雷达挂载成功")
+print(f"⏱️  每 {SAVE_INTERVAL//60} 分钟自动保存一次")
+print("🎥 画面窗口已弹出，按 Ctrl+C 键可安全退出")
 
-def process_lidar_data(point_cloud):
-    # 保存点云数据到 D:\jiqi_study\lidar
-    point_cloud.save_to_disk(f'D:/jiqi_study/lidar/lidar_{point_cloud.frame:06d}.ply')
+# ====================== 窗口显示 + 保存线程 ======================
+def show_window():
+    global latest_image, latest_lidar, last_save_time
+    while not stop_thread:
+        if latest_image is not None:
+            cv2.imshow("CARLA Camera", latest_image)
+        
+        # 按 Q 退出
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
+            break
 
-# 监听传感器数据
-camera.listen(process_camera_image)
-lidar.listen(process_lidar_data)
+        # 5分钟自动保存
+        current_time = time.time()
+        if current_time - last_save_time >= SAVE_INTERVAL:
+            if latest_image is not None and latest_lidar is not None:
+                ts = str(int(current_time))
+                cv2.imwrite(os.path.join(image_folder, f"{ts}.png"), latest_image)
+                latest_lidar.save_to_disk(os.path.join(lidar_folder, f"{ts}.ply"))
+                print(f"💾 已保存：{ts}")
+                last_save_time = current_time
 
-# 7. 保持运行，按 Ctrl+C 退出
-print("\n🚗 仿真已启动，车辆正在雨天自动行驶，传感器数据将保存到 D:\\jiqi_study 文件夹...")
-print("按 Ctrl+C 停止仿真")
+# ====================== 传感器回调 ======================
+def handle_img(image):
+    global latest_image
+    img = np.frombuffer(image.raw_data, dtype=np.uint8)
+    img = img.reshape((image.height, image.width, 4))[:, :, :3]
+    latest_image = img
 
+def handle_lidar(lidar_data):
+    global latest_lidar
+    latest_lidar = lidar_data
+
+camera.listen(handle_img)
+lidar.listen(handle_lidar)
+
+# ====================== 启动窗口线程 ======================
+thread = threading.Thread(target=show_window, daemon=True)
+thread.start()
+
+# ====================== 主程序等待退出 ======================
 try:
-    while True:
-        time.sleep(0.1)
-except KeyboardInterrupt:
-    print("\n⏹️ 收到停止信号，正在清理资源...")
+    while thread.is_alive():
+        time.sleep(0.5)
+except:
+    pass
 finally:
+    stop_thread = True
+    camera.stop()
+    lidar.stop()
     cv2.destroyAllWindows()
     camera.destroy()
     lidar.destroy()
     vehicle.destroy()
-    print("✅ 资源已释放，仿真结束！")
+    print("✅ 已安全退出！")
