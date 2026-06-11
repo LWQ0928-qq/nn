@@ -1,1881 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" /><link rel="canonical" href="https://wengqiuyi.github.io/nn/" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>神经网络</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "\u9996\u9875";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = "/nn/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
 
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-      
-      
-        <link rel="canonical" href="https://github.com/LWQ0928-qq/nn/carla_3D_object_fusion_detect/">
-      
-      
-      
-      
-        
-      
-      
-      <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
-    
-    
-      
-        <title>CARLA雨天多传感器自动驾驶仿真数据采集系统项目介绍</title>
-      
-    
-    
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
-      
-        
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
-      
-      
+<body class="wy-body-for-nav" role="document">
 
-
-    
-    
-      
-    
-    
-      
-        
-        
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-      
-    
-    
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-    
-      
-
-    
-    
-  </head>
-  
-  
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
-  
-    
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#carla" class="md-skip">
-          Skip to content
-        </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-    
-      
-
-  
-
-<header class="md-header md-header--shadow" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="CARLA雨天多传感器自动驾驶仿真数据采集系统项目介绍" class="md-header__button md-logo" aria-label="CARLA雨天多传感器自动驾驶仿真数据采集系统项目介绍" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    <label class="md-header__button md-icon" for="__drawer">
-      
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
-    </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            CARLA雨天多传感器自动驾驶仿真数据采集系统项目介绍
-          </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
-              首页
-            
-          </span>
-        </div>
-      </div>
-    </div>
-    
-      
-    
-    
-    
-    
-      
-      
-        <label class="md-header__button md-icon" for="__search">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        </label>
-        <div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
-      <label class="md-search__icon md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
-      </label>
-      <nav class="md-search__options" aria-label="Search">
-        
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
-          
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-        </button>
-      </nav>
-      
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
-            Initializing search
-          </div>
-          <ol class="md-search-result__list" role="presentation"></ol>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> 神经网络
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
 </div>
-      
-    
-    
-  </nav>
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
-        
-          
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
+      </div>
 
-
-
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="." title="CARLA雨天多传感器自动驾驶仿真数据采集系统项目介绍" class="md-nav__button md-logo" aria-label="CARLA雨天多传感器自动驾驶仿真数据采集系统项目介绍" data-md-component="logo">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
-
-    </a>
-    CARLA雨天多传感器自动驾驶仿真数据采集系统项目介绍
-  </label>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-  
-  
-    
-  
-  
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    首页
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    首页
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        一、项目背景与研究意义
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        二、整体功能架构
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="二、整体功能架构">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （一）仿真底层交互模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （二）动态虚拟交通流模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （三）多天气工况模拟模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （四）多传感器同步采集模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （五）可视化与辅助决策模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （六）数据存储与轨迹录制模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        三、目录自动管理规则
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        四、人机交互按键说明
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        五、项目应用场景
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        六、项目优势总结
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        一、文档概述
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        二、系统整体功能
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="二、系统整体功能">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#21" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2.1 核心能力
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#22" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2.2 应用场景
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        三、运行环境
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="三、运行环境">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#31" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3.1 基础环境
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#32" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3.2 依赖库
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        四、目录结构
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        五、全局参数配置
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="五、全局参数配置">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#51" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5.1 数据保存配置
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#52" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5.2 动态交通配置
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#53" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5.3 障碍物预警配置
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#54" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5.4 天气预设
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        六、核心模块说明
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="六、核心模块说明">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#61" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.1 路径与目录初始化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#62-carla" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.2 CARLA 连接与场景初始化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#63" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.3 动态交通生成与管理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#64" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.4 传感器部署与数据回调
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="6.4 传感器部署与数据回调">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        传感器清单
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        回调机制
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#65" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.5 轨迹数据记录
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#66" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.6 视觉与感知算法模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#67" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.7 主运行循环
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#68" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.8 资源释放模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        七、交互快捷键
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        八、标准运行流程
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_23" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        九、数据输出说明
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="九、数据输出说明">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#91" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9.1 定时自动数据
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#92" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9.2 碰撞触发数据
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#93" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9.3 轨迹数据
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_24" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        十、常见问题排查
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_25" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        十一、项目拓展方向（结合雨天多传感器融合课题）
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">首页</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#_2">入门</a>
     </li>
-  
-
-    
-  </ul>
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        一、项目背景与研究意义
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        二、整体功能架构
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="二、整体功能架构">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （一）仿真底层交互模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （二）动态虚拟交通流模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_5" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （三）多天气工况模拟模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_6" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （四）多传感器同步采集模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （五）可视化与辅助决策模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        （六）数据存储与轨迹录制模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        三、目录自动管理规则
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_10" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        四、人机交互按键说明
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_11" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        五、项目应用场景
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_12" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        六、项目优势总结
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_13" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        一、文档概述
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_14" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        二、系统整体功能
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="二、系统整体功能">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#21" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2.1 核心能力
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#22" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2.2 应用场景
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_15" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        三、运行环境
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="三、运行环境">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#31" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3.1 基础环境
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#32" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3.2 依赖库
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_16" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        四、目录结构
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_17" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        五、全局参数配置
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="五、全局参数配置">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#51" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5.1 数据保存配置
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#52" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5.2 动态交通配置
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#53" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5.3 障碍物预警配置
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#54" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5.4 天气预设
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_18" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        六、核心模块说明
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="六、核心模块说明">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#61" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.1 路径与目录初始化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#62-carla" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.2 CARLA 连接与场景初始化
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#63" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.3 动态交通生成与管理
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#64" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.4 传感器部署与数据回调
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="6.4 传感器部署与数据回调">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#_19" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        传感器清单
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#_20" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        回调机制
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#65" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.5 轨迹数据记录
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#66" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.6 视觉与感知算法模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#67" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.7 主运行循环
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#68" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        6.8 资源释放模块
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_21" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        七、交互快捷键
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_22" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        八、标准运行流程
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_23" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        九、数据输出说明
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="九、数据输出说明">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#91" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9.1 定时自动数据
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#92" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9.2 碰撞触发数据
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#93" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        9.3 轨迹数据
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_24" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        十、常见问题排查
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#_25" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        十一、项目拓展方向（结合雨天多传感器融合课题）
-      
-    </span>
-  </a>
-  
-</li>
-      
+    <li class="toctree-l2"><a class="reference internal" href="#_3">感知</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_4">规划</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#_5">控制</a>
+    </li>
     </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          
-            <div class="md-content" data-md-component="content">
-              
-              <article class="md-content__inner md-typeset">
-                
-                  
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="lane_detection/">车道线检测</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="car_racing_dqn_improvements/">CarRacing DQN/DoubleDQN：训练改进与可视化对比</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="carla_yolo_detection/">自动驾驶感知系统</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="auto_drive_seg/">自动驾驶车辆语义分割</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="mujoco_running/running/">双足人形机器人SAC步态仿真</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
 
-
-
-<h1 id="carla">CARLA雨天多传感器自动驾驶仿真数据采集系统项目介绍</h1>
-<h2 id="_1">一、项目背景与研究意义</h2>
-<p>自动驾驶感知算法高度依赖海量多场景标注数据集，实车采集存在成本高、场景受限、恶劣工况危险、难以复现碰撞场景等痛点。CARLA开源自动驾驶仿真平台可快速搭建可控虚拟交通场景，能够批量生成雨天、雾天、夜间等各类退化感知工况数据，非常适合多传感器融合感知算法的研发与验证。</p>
-<p>本项目基于CARLA仿真平台搭建一套完整的多传感器同步数据采集与可视化仿真系统，一站式完成传感器数据同步录制、动态交通场景生成、工况切换、障碍物预警、轨迹存储等功能，为3D目标检测、多传感器时空配准、感知模型鲁棒性消融实验提供标准化数据集支撑。</p>
-<h2 id="_2">二、整体功能架构</h2>
-<h3 id="_3">（一）仿真底层交互模块</h3>
-<ol>
-<li>实现CARLA客户端自动重连机制，连接失败自动重试，无需手动干预；</li>
-<li>自动生成Tesla Model3自动驾驶自车，开启内置自动驾驶模式自主循路行驶；</li>
-<li>完整生命周期管理所有仿真Actor，程序正常退出时自动销毁车辆、行人、传感器、AI控制器，无残留进程占用仿真端口。</li>
-</ol>
-<h3 id="_4">（二）动态虚拟交通流模块</h3>
-<p>摒弃固定NPC生成策略，依据自车实时行驶速度自适应调整交通流密度：
-1. <strong>低速拥堵工况（车速＜20km/h）</strong>：缩短NPC生成间隔，提升车辆、行人生成上限，近距离清理远处交通参与者，模拟城市拥堵路段；
-2. <strong>中速常规工况（20~60km/h）</strong>：使用标准车流参数，还原城市常规通勤交通场景；
-3. <strong>高速巡航工况（车速＞60km/h）</strong>：拉长生成间隔、减少NPC数量，扩大远距离销毁阈值，降低高速场景下仿真算力开销。</p>
-<p>所有超出设定距离的NPC车辆、行人及配套AI控制器会自动销毁，避免仿真场景内Actor无限堆积卡顿。</p>
-<h3 id="_5">（三）多天气工况模拟模块</h3>
-<p>内置4套完整气象参数模板，支持一键循环切换，批量构建差异化感知实验场景：
-1. 晴天：无降水、无雾气、光照充足，作为基准对照场景；
-2. 雨天：高降雨量、路面湿滑、云层厚重，造成图像反光、点云雨滴噪点；
-3. 雾天：高浓度近场雾气，大幅压缩相机有效观测距离；
-4. 夜间：低光照环境，相机成像信噪比显著下降。</p>
-<h3 id="_6">（四）多传感器同步采集模块</h3>
-<p>自车搭载多套异构车载传感器，实现时间戳同步采集，各传感器参数固定可配置：
-1. <strong>双路RGB相机</strong>
-    - 前置相机：800×600分辨率、110°大视场角，用于碰撞时刻抓拍留存；
-    - 后置跟随相机：1024×768分辨率、90°视场角，作为主可视化画面载体。
-2. <strong>语义分割相机</strong>
-    挂载位置同后置RGB相机，输出CityScapes标准调色语义图，可直接用于像素级感知消融实验。
-3. <strong>3D激光雷达</strong>
-    最大测距100m，每秒输出50000个点云，10Hz旋转扫描，支持原始点云PLY格式本地存储。
-4. <strong>辅助感知传感器</strong>
-    - 碰撞传感器：触发碰撞事件后自动保存事发图像、点云及碰撞冲量，用于危险场景分析；
-    - GNSS定位模块：1Hz输出经纬度、海拔高度，实现全局定位；
-    - IMU惯性单元：20Hz高频输出三轴加速度、陀螺仪、航向角，完成姿态解算。</p>
-<h3 id="_7">（五）可视化与辅助决策模块</h3>
-<ol>
-<li><strong>双视图切换显示</strong>
-    一键在RGB实景画面、语义分割标注画面之间切换，右下角小窗固定嵌入前置相机画面，多视角同步观测。</li>
-<li><strong>车载HUD仪表盘</strong>
-    画面左上角集成可视化仪表盘：彩色车速进度条、实时NPC车辆/行人数量、运行FPS、程序异常计数、功能按键提示；天气切换后弹窗短时高亮提示。</li>
-<li><strong>前向障碍物分级预警</strong>
-    截取激光雷达前向60°扇形有效观测区域，过滤地面、高空无效点云：距离10m内黄色预警提示，5m内红色危险告警，直观提醒潜在碰撞风险。</li>
-<li><strong>车道线可视化绘制</strong>
-    读取CARLA路网路径中心点，根据标准车道宽度计算左右车道边界世界坐标，结合相机内参与外参将三维边界投影至像素画面，左蓝右红渲染车道线，可直接用于车道保持算法调试。</li>
-<li><strong>交通信号灯识别</strong>
-    自动检索自车50m范围内交通信号灯，识别红/黄/绿状态并同步标注距离，在画面固定位置弹窗展示。</li>
-</ol>
-<h3 id="_8">（六）数据存储与轨迹录制模块</h3>
-<ol>
-<li><strong>周期性自动归档</strong>
-    设定固定时间间隔，自动保存RGB图像、语义分割图、激光点云文件，自动按时间戳命名归档。</li>
-<li><strong>碰撞触发式留存</strong>
-    碰撞事件触发后冷却锁定，短时间内重复碰撞不重复存储，单次碰撞同步留存图像+点云数据。</li>
-<li><strong>车辆轨迹CSV录制</strong>
-    轨迹文件以时间戳命名，存储字段包含系统时间戳、GNSS经纬度海拔、三轴速度、实时车速、IMU加速度/陀螺仪、航向角、车辆欧拉姿态角；支持按键手动单帧打点记录，可直接导入数据分析软件做定位、轨迹拟合实验。</li>
-</ol>
-<h2 id="_9">三、目录自动管理规则</h2>
-<p>程序运行时自动向上检索三级父目录，无需手动新建文件夹，自动生成5类数据归档目录：
-1. images：RGB相机图像存储目录；
-2. lidar：激光雷达PLY点云存储目录；
-3. collision：碰撞触发的图像、点云专属存档目录；
-4. semantic：语义分割图像存储目录；
-5. trajectory：车辆行驶轨迹CSV表格存储目录。</p>
-<h2 id="_10">四、人机交互按键说明</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">按键</th>
-<th>对应功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">Q / ESC</td>
-<td>退出仿真程序，自动清理全部仿真Actor资源</td>
-</tr>
-<tr>
-<td style="text-align: center;">S</td>
-<td>RGB实景视图 ↔ 语义分割视图一键切换</td>
-</tr>
-<tr>
-<td style="text-align: center;">W</td>
-<td>循环切换4种预设仿真天气</td>
-</tr>
-<tr>
-<td style="text-align: center;">R</td>
-<td>手动触发单次轨迹数据写入CSV文件</td>
-</tr>
-</tbody>
-</table>
-<h2 id="_11">五、项目应用场景</h2>
-<ol>
-<li><strong>多传感器融合数据集批量采集</strong>
-    同步输出图像、语义分割、点云、定位姿态多源对齐数据，无需额外做时空配准预处理，直接用于融合3D目标检测模型训练。</li>
-<li><strong>感知模型鲁棒性消融实验</strong>
-    雨天、雾天、夜间等退化工况可控复现，批量采集恶劣场景数据，测试算法极端工况下稳定性。</li>
-<li><strong>车道保持、信号灯识别算法调试</strong>
-    内置车道线可视化、信号灯识别可视化模块，算法迭代调试直观高效。</li>
-<li><strong>定位与惯性导航融合标定</strong>
-    GNSS+IMU同步轨迹数据完整记录，可开展组合导航滤波、位姿解算相关仿真实验。</li>
-</ol>
-<h2 id="_12">六、项目优势总结</h2>
-<ol>
-<li><strong>全流程自动化</strong>：目录创建、Actor生成、数据保存、资源销毁全部自动化，无人值守批量采集数据集；</li>
-<li><strong>场景高度可控</strong>：交通流密度、天气、观测距离等参数可直接配置修改，实验变量可精准控制，可复现性强；</li>
-<li><strong>集成度高</strong>：传感器采集、可视化观测、预警提示、轨迹录制功能一体化，无需拆分多个独立脚本；</li>
-<li><strong>兼容性强</strong>：输出数据格式通用（PNG图像、PLY点云、CSV表格），可无缝对接主流深度学习训练框架；</li>
-<li><strong>鲁棒性完善</strong>：内置异常捕获、重连重试、冷却锁、资源自动回收机制，长时间连续运行不易崩溃。# CARLA 自动驾驶多传感器数据采集系统</li>
-</ol>
-<h2 id="_13">一、文档概述</h2>
-<p>本文档介绍基于 <strong>Python + CARLA 模拟器</strong> 开发的自动驾驶多传感器仿真采集系统，支持多天气场景、动态交通流、障碍物预警、车道线可视化、轨迹与传感器数据全量采集，可用于雨天多传感器融合感知、目标检测、风险评估等算法仿真与数据集制作，适配网页展示、项目汇报、实验复现等场景。</p>
-<h2 id="_14">二、系统整体功能</h2>
-<h3 id="21">2.1 核心能力</h3>
-<ol>
-<li><strong>模拟器对接</strong>：自动连接 CARLA，创建自动驾驶主车，支持重连容错。</li>
-<li><strong>多传感器部署</strong>：集成 RGB 相机、语义相机、激光雷达、碰撞传感器、GNSS、IMU，全维度采集感知与定位数据。</li>
-<li><strong>多环境仿真</strong>：内置晴天、大雨、雾天、夜晚四类典型场景，支持快捷键一键切换天气。</li>
-<li><strong>动态交通流</strong>：根据自车车速自适应调整车辆、行人的生成数量、刷新间隔与清除范围，模拟拥堵/常规/高速路况。</li>
-<li><strong>安全感知预警</strong>：基于激光雷达实现前方障碍物距离检测，分级触发提醒、危险告警。</li>
-<li><strong>可视化交互</strong>：实时绘制车速仪表盘、车道线、红绿灯状态，支持 RGB/语义分割视图切换。</li>
-<li><strong>数据存储</strong>：定时保存图像、点云；碰撞事件自动存档；支持手动/自动记录车辆轨迹至 CSV 文件。</li>
-<li><strong>资源管理</strong>：程序退出自动销毁所有角色、传感器，避免模拟器残留进程。</li>
-</ol>
-<h3 id="22">2.2 应用场景</h3>
-<ul>
-<li>自动驾驶感知算法仿真测试</li>
-<li>雨天/雾天恶劣环境多传感器融合数据集采集</li>
-<li>车道线检测、语义分割、3D 目标检测实验</li>
-<li>障碍物预警、行车风险评估算法验证</li>
-</ul>
-<h2 id="_15">三、运行环境</h2>
-<h3 id="31">3.1 基础环境</h3>
-<ul>
-<li>操作系统：Windows / Linux</li>
-<li>Python 版本：3.7 ~ 3.8（CARLA 官方适配版本）</li>
-<li>仿真软件：CARLA 0.9.12 及以上稳定版</li>
-</ul>
-<h3 id="32">3.2 依赖库</h3>
-<pre><code class="language-bash">pip install opencv-python numpy
-</code></pre>
-<ul>
-<li><code>carla</code>：模拟器原生接口，随 CARLA 安装，无需额外安装</li>
-<li><code>opencv-python</code>：图像渲染、画面展示、图片读写</li>
-<li><code>numpy</code>：矩阵运算、点云解析、坐标转换</li>
-<li>内置库：<code>time</code>/<code>os</code>/<code>csv</code>/<code>math</code>/<code>random</code>/<code>datetime</code> 等，用于路径、时间、文件管理</li>
-</ul>
-<h2 id="_16">四、目录结构</h2>
-<p>程序自动在项目上级目录生成数据文件夹，分类存储仿真产出：</p>
-<pre><code>项目根目录/
-├── images/        # 定时采集 RGB 图像
-├── lidar/         # 定时采集激光雷达点云（.ply 格式）
-├── collision/     # 碰撞触发时保存的图像+点云
-├── semantic/      # 语义分割相机图像
-└── trajectory/   # 车辆轨迹 CSV 文件（定位、姿态、速度、IMU 数据）
-</code></pre>
-<h2 id="_17">五、全局参数配置</h2>
-<h3 id="51">5.1 数据保存配置</h3>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>取值</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>SAVE_INTERVAL</td>
-<td>300s</td>
-<td>自动保存传感器数据间隔（5分钟）</td>
-</tr>
-<tr>
-<td>COLLISION_COOLDOWN_SEC</td>
-<td>3.0s</td>
-<td>碰撞冷却时间，短时间重复碰撞不重复存图</td>
-</tr>
-</tbody>
-</table>
-<h3 id="52">5.2 动态交通配置</h3>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>取值</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>BASE_SPAWN_INTERVAL</td>
-<td>5.0s</td>
-<td>常规车速下交通参与者生成间隔</td>
-</tr>
-<tr>
-<td>BASE_MAX_VEHICLES</td>
-<td>4</td>
-<td>常规场景最大车辆数量</td>
-</tr>
-<tr>
-<td>BASE_MAX_PEDESTRIANS</td>
-<td>5</td>
-<td>常规场景最大行人数量</td>
-</tr>
-<tr>
-<td>LOW_SPEED_THRESHOLD</td>
-<td>20 km/h</td>
-<td>低速阈值，低于该值切换拥堵模式</td>
-</tr>
-<tr>
-<td>HIGH_SPEED_THRESHOLD</td>
-<td>60 km/h</td>
-<td>高速阈值，高于该值切换稀疏模式</td>
-</tr>
-<tr>
-<td>SPAWN_RADIUS</td>
-<td>40m</td>
-<td>仅在自车 40 米范围内生成车辆/行人</td>
-</tr>
-<tr>
-<td>REMOVE_DISTANCE_BASE</td>
-<td>80m</td>
-<td>中/低速下，超出范围自动清除远端角色</td>
-</tr>
-<tr>
-<td>REMOVE_DISTANCE_HIGH</td>
-<td>120m</td>
-<td>高速下，扩大远端角色清除范围</td>
-</tr>
-</tbody>
-</table>
-<h3 id="53">5.3 障碍物预警配置</h3>
-<table>
-<thead>
-<tr>
-<th>参数</th>
-<th>取值</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>OBSTACLE_WARNING_DISTANCE</td>
-<td>10.0m</td>
-<td>预警触发距离</td>
-</tr>
-<tr>
-<td>OBSTACLE_DANGER_DISTANCE</td>
-<td>5.0m</td>
-<td>危险告警触发距离</td>
-</tr>
-<tr>
-<td>OBSTACLE_FOV_ANGLE</td>
-<td>60°</td>
-<td>前方障碍物检测视场角</td>
-</tr>
-<tr>
-<td>OBSTACLE_MAX_HEIGHT</td>
-<td>2.0m</td>
-<td>高度过滤阈值，剔除高空无效点云</td>
-</tr>
-</tbody>
-</table>
-<h3 id="54">5.4 天气预设</h3>
-<p>系统内置 4 套 CARLA 天气参数，启动默认<strong>大雨场景</strong>：
-1. sunny：晴天，无雨、无雾、路面干燥
-2. rainy：大雨，强降雨+路面积水+轻度雾气
-3. foggy：大雾，低能见度、无降雨
-4. night：夜间，弱光照、无雨无雾</p>
-<div align="center">
-<table border="0">
-  <tr>
-    <td align="center">
-      <img src="weather_sunny.png" width="520">
-      <p>晴天场景（SUNNY）</p>
-    </td>
-    <td align="center">
-      <img src="weather_rainy.png" width="520">
-      <p>雨天场景（RAINY）</p>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="weather_foggy.png" width="520">
-      <p>雾天场景（FOGGY）</p>
-    </td>
-    <td align="center">
-      <img src="weather_night.png" width="520">
-      <p>夜晚场景（NIGHT）</p>
-    </td>
-  </tr>
-</table>
-<p>图0：四种预设天气仿真效果对比</p>
-</div>
-
-<h2 id="_18">六、核心模块说明</h2>
-<h3 id="61">6.1 路径与目录初始化</h3>
-<p>自动解析脚本所在路径，逐层向上定位根目录，批量创建数据存储文件夹，目录已存在则跳过，保证数据分类规整。</p>
-<h3 id="62-carla">6.2 CARLA 连接与场景初始化</h3>
-<ol>
-<li>带重试机制连接本地 CARLA（默认端口 2000），连接失败直接退出并提示。</li>
-<li>加载地图、生成自动驾驶主车，默认选用特斯拉 Model3。</li>
-<li>预加载车辆、行人蓝图，过滤无效模型，为动态交通生成做准备。</li>
-</ol>
-<h3 id="63">6.3 动态交通生成与管理</h3>
-<ul>
-<li>角色生成：在自车周边随机生成自动驾驶车辆、带自主行走逻辑的行人，生成前检测点位是否占用，避免穿模。</li>
-<li>角色清理：定时清除远离自车的车辆、行人，降低仿真算力开销。</li>
-<li>自适应逻辑：根据实时车速切换<strong>拥堵/常规/高速</strong>三种模式，动态调整生成数量与间隔。</li>
-</ul>
-<h3 id="64">6.4 传感器部署与数据回调</h3>
-<h4 id="_19">传感器清单</h4>
-<table>
-<thead>
-<tr>
-<th>传感器</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>前置 RGB 相机</td>
-<td>主视角图像采集、碰撞事件存图</td>
-</tr>
-<tr>
-<td>跟随 RGB 相机</td>
-<td>全局画面展示、车道线投影绘制</td>
-</tr>
-<tr>
-<td>语义分割相机</td>
-<td>场景语义标注数据采集</td>
-</tr>
-<tr>
-<td>激光雷达</td>
-<td>3D 点云采集、前方障碍物测距</td>
-</tr>
-<tr>
-<td>碰撞传感器</td>
-<td>监测车辆碰撞，自动存档数据</td>
-</tr>
-<tr>
-<td>GNSS</td>
-<td>采集经纬度、海拔定位信息</td>
-</tr>
-<tr>
-<td>IMU</td>
-<td>采集加速度、陀螺仪、车辆姿态角</td>
-</tr>
-</tbody>
-</table>
-<h4 id="_20">回调机制</h4>
-<p>传感器采用异步回调，实时更新全局数据变量，主循环统一读取数据做可视化、计算与存储。</p>
-<h3 id="65">6.5 轨迹数据记录</h3>
-<ol>
-<li>程序启动自动创建 CSV 轨迹文件，写入标准化表头。</li>
-<li>记录内容：时间戳、经纬度、海拔、三轴速度、车速、加速度、角速度、航向角、姿态角等。</li>
-<li>支持两种模式：后台持续记录、按键手动单条保存。</li>
-</ol>
-<h3 id="66">6.6 视觉与感知算法模块</h3>
-<ul>
-<li><strong>1. 天气切换</strong>：循环切换四类预设天气场景。
-支持RGB视图 / 语义分割视图一键切换（快捷键S）。</li>
-</ul>
-<div align="center">
-<img src="weather_semantic.png" width="780">
-<p>图1：语义分割视图渲染效果，不同类别像素独立上色标注</p>
-</div>
-
-<ul>
-<li><strong>2. 障碍物检测</strong>：解析激光雷达点云，筛选前方有效障碍物，计算最短距离并触发分级告警。</li>
-</ul>
-<div align="center">
-<img src="barrier.png" width="780">
-<p>图2：前方障碍物近距离危险告警弹窗</p>
-</div>
-
-<ul>
-<li><strong>3. 车道线绘制</strong>：利用相机内参矩阵，将世界坐标系下的车道线投影至图像画面。</li>
-</ul>
-<div align="center">
-<img src="carline.png" width="780">
-<p>图3：图像空间投影绘制车道线可视化效果</p>
-</div>
-
-<ul>
-<li><strong>4. 红绿灯识别</strong>：检测前方红绿灯状态、距离，并在界面展示。</li>
-</ul>
-<div align="center">
-<img src="traffic_light.png" width="780">
-<p>图4：红绿灯状态识别+距离实时显示界面</p>
-</div>
-
-<ul>
-<li><strong>5. 仪表盘绘制</strong>：实时渲染车速、交通参与者数量、帧率、运行状态、告警提示。</li>
-</ul>
-<div align="center">
-<img src="shudu.png" width="600">
-<p>图5：左侧仪表盘完整UI信息细节展示</p>
-</div>
-
-<h3 id="67">6.7 主运行循环</h3>
-<p>系统核心死循环，逐帧执行逻辑：
-1. 获取自车位置、姿态、车速，更新动态交通参数。
-2. 激光雷达障碍物检测，更新告警状态。
-3. 定时生成、清除交通参与者。
-4. 合成画面，根据视图模式渲染图像、车道线、仪表盘。
-5. 监听键盘指令，响应交互操作。
-6. 到达时间阈值，自动保存图像、点云数据。
-7. 异常捕获与帧率统计，保证程序稳定运行。</p>
-<h3 id="68">6.8 资源释放模块</h3>
-<p>程序正常/异常退出时统一执行清理操作：关闭图像窗口、关闭轨迹文件、停止并销毁所有传感器、车辆、行人及AI控制器，释放 CARLA 仿真资源。</p>
-<h2 id="_21">七、交互快捷键</h2>
-<p>在仿真画面窗口内按下按键实现功能切换：
-| 按键 | 功能 |
-| ---- | ---- |
-| Q / ESC | 退出程序，自动清理所有资源 |
-| S / s | 切换显示模式：RGB 视图 ↔ 语义分割视图 |
-| W / w | 循环切换天气场景 |
-| R / r | 手动保存当前时刻轨迹数据至 CSV |</p>
-<h2 id="_22">八、标准运行流程</h2>
-<ol>
-<li>启动 CARLA 模拟器，等待场景加载完成。</li>
-<li>运行 Python 脚本，程序自动连接模拟器、生成车辆与传感器。</li>
-<li>等待传感器初始化完成，弹出仿真画面。</li>
-<li>主车自动行驶，系统后台采集数据、模拟交通流。</li>
-<li>根据需求使用快捷键切换天气、视图、手动保存轨迹。</li>
-<li>按下 <code>Q/ESC</code> 退出程序，自动清理仿真角色。</li>
-</ol>
-<h2 id="_23">九、数据输出说明</h2>
-<h3 id="91">9.1 定时自动数据</h3>
-<ul>
-<li>RGB 图像：<code>images/</code> 目录，时间戳命名 PNG 图片</li>
-<li>语义图像：<code>semantic/</code> 目录，语义分割标注图</li>
-<li>激光雷达：<code>lidar/</code> 目录，标准 <code>.ply</code> 点云文件，支持 CloudCompare 等工具打开</li>
-</ul>
-<h3 id="92">9.2 碰撞触发数据</h3>
-<p>发生碰撞时，自动在 <code>collision/</code> 保存碰撞瞬间图像与点云，控制台同步打印碰撞力度。</p>
-<h3 id="93">9.3 轨迹数据</h3>
-<p><code>trajectory/</code> 目录下 CSV 文件，完整记录车辆运动、定位、姿态数据，可直接用于数据分析与算法训练。</p>
-<h2 id="_24">十、常见问题排查</h2>
-<ol>
-<li><strong>无法连接 CARLA</strong>
-   检查模拟器是否启动、端口是否为默认 2000，关闭防火墙拦截。</li>
-<li><strong>传感器无数据</strong>
-   电脑性能不足导致模拟器帧率过低，重启 CARLA 与脚本。</li>
-<li><strong>车辆/行人不生成</strong>
-   地图生成点不足，适当调大 <code>SPAWN_RADIUS</code> 参数。</li>
-<li><strong>画面严重卡顿</strong>
-   降低相机分辨率、减少传感器数量、下调交通参与者最大数量。</li>
-</ol>
-<h2 id="_25">十一、项目拓展方向（结合雨天多传感器融合课题）</h2>
-<p>结合《基于深度学习置信度加权的自动驾驶雨天多传感器融合感知优化》项目，可基于本系统二次开发：
-1. 采集不同雨强、雾浓度下相机、激光雷达数据，制作恶劣天气多模态数据集。
-2. 提取传感器特征，对接深度学习模型，实现<strong>动态置信权重分配</strong>仿真验证。
-3. 结合障碍物距离、车速、天气参数设计风险评分模型，输出减速、告警等驾驶决策。
-4. 增加数据标注功能，完成 3D 检测框、传感器退化特征标注。
-5. 接入多目标跟踪算法，实现连续帧目标轨迹分析。</p>
-
-
-
-
-
-
-
-
-
-
-
-
-                
-              </article>
-            </div>
-          
-          
-<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
-        </div>
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">神经网络</a>
         
-      </main>
-      
-        <footer class="md-footer">
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-copyright">
-  
-  
-    Made with
-    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-      Material for MkDocs
-    </a>
-  
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">首页</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/OpenHUTB/nn/edit/main/docs/index.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
 </div>
-      
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="_1"><a href="https://github.com/OpenHUTB/nn">神经网络</a></h1>
+<p>欢迎使用神经网络文档，该页面包含所有内容的索引。</p>
+<ul>
+<li><a href="#primary"><strong>入门</strong></a></li>
+<li><a href="#perception"><strong>感知</strong></a></li>
+<li><a href="#planning"><strong>规划</strong></a></li>
+<li><a href="#control"><strong>控制</strong></a></li>
+</ul>
+<hr />
+<h2 id="_2">入门 <span id="primary"></span></h2>
+<p><a href="carla_traffic_sign_recognition/carla_traffic_sign_recognition/"><strong>11</strong></a> — 入门热身示例<br />
+<a href="warmup/"><strong>热身</strong></a> — 入门热身示例</p>
+<p><a href="linear_regression/"><strong>线性回归</strong></a></p>
+<p><a href="linear_regression_improved/"><strong>线性回归改进</strong></a></p>
+<p><a href="linear_regression_fix/"><strong>线性回归修复</strong></a> - 修复偏置未更新bug</p>
+<p><a href="softmax_regression/"><strong>softmax回归</strong></a></p>
+<p><a href="softmax_regression_improved/"><strong>线性回归和softmax回归改进</strong></a></p>
+<p><a href="svm/"><strong>支持向量机</strong></a></p>
+<p><a href="svm_improved/"><strong>支持向量机改进</strong></a></p>
+<p><a href="simple_nn/"><strong>简单神经网络</strong></a></p>
+<p><a href="CNN/"><strong>卷积神经网络</strong></a></p>
+<p><a href="cnn_keras_sequential_improved/"><strong>卷积神经网络改进</strong></a></p>
+<p><a href="RNN/"><strong>循环神经网络</strong></a></p>
+<p><a href="poem_generation_rnn_improved/"><strong>循环神经网络改进</strong></a></p>
+<p><a href="attention/"><strong>注意力机制</strong></a></p>
+<p><a href="gaussian_mixture/"><strong>高斯混合</strong></a></p>
+<p><a href="chap11_gaussian_mixture/"><strong>高斯混合改进</strong></a></p>
+<p><a href="RBM/"><strong>受限玻尔兹曼机</strong></a></p>
+<p><a href="RL/"><strong>强化学习</strong></a></p>
+<p><a href="ant_robot/%E6%9C%BA%E5%99%A8%E4%BA%BA%E4%BB%BF%E7%9C%9F%E7%B3%BB%E7%BB%9F/">机器人仿真(MuJoCo)</a></p>
+<hr />
+<h2 id="_3">感知 <span id="perception"></span></h2>
+<p><a href="lane_detection/"><strong>车道线检测</strong></a> - 基于 OpenCV 的 Carla 场景车道线检测（分步实现）</p>
+<p><a href="carla_CAM/"><strong>carla_CAM</strong></a> - 使用类激活映射测试卷积神经网络</p>
+<p><a href="edge_intelligence_V2X/"><strong>V2X路侧智能感知</strong></a> - 基于YOLOv8n的V2X路侧智能感知系统优化与实现</p>
+<p><a href="test/object_detection/"><strong>目标检测</strong></a> - 目标检测与危险评估
+<a href="image_object_detection/image_object_detection/"><strong>图像目标检测</strong></a> - 多功能图像目标检测系统
+<a href="#tracking"><strong>跟踪</strong></a> 
+<a href="./test.md"><strong>路径追踪</strong></a></p>
+<p><a href="traffic_sign_detection/"><strong>交通标识检测</strong></a> - 目标检测</p>
+<p><a href="td3_carracing/"><strong>td3_carracing</strong></a> - 基于 TD3 + CNN 的 CarRacing 强化学习自动驾驶系统</p>
+<p><a href="UVA_flight_control_system/"><strong>无人机飞行控制</strong></a> - 基于AirSim的无人机飞行控制系统</p>
+<p><a href="humanoid_balance/Humanoid_Balance/"><strong>人形机器人平衡控制</strong></a> - 基于强化学习的人形机器人平衡控制仿真</p>
+<p><a href="improve/project/"><strong>工程规范优化</strong></a> - 多场景仿真与控制优化项目</p>
+<p><a href="mujoco_man/mujoco_manrun/"><strong>人形机器人站立行走</strong></a> -  基于 CPG + PD 的人形机器人稳定站立与行走仿真（MuJoCo）</p>
+<p><a href="mujoco_running/running/"><strong>人形机器人SAC强化学习步态优化</strong></a> - 基于CPG+PD+SAC残差强化学习的缓步稳定行走仿真</p>
+<p><a href="setup_tool/report/"><strong>setup_tool模块汇报文档</strong></a> - setup_tool 模块背景、改进内容、运行方式与效果总结</p>
+<h2 id="_4">规划 <span id="planning"></span></h2>
+<p><a href="#navigation"><strong>导航</strong></a></p>
+<h2 id="_5">控制  <span id="control"></span></h2>
+<p><a href="#pid">PID</a>
+title: 主页</p>
+<h1 id="_6"><a href="https://github.com/OpenHUTB/nn">神经网络</a></h1>
+<p>欢迎使用神经网络文档，该页面包含所有内容的索引。</p>
+<h2 id="_7">目录</h2>
+<ul>
+<li>
+<p><a href="#primary">入门</a> - 基础算法与模型示例</p>
+</li>
+<li>
+<p><a href="#perception">感知</a> - 计算机视觉与感知系统</p>
+</li>
+<li>
+<p><a href="#planning">规划</a> - 路径规划与决策</p>
+</li>
+<li>
+<p><a href="#control">控制</a> - 控制算法与仿真</p>
+</li>
+</ul>
+<hr />
+<h2 id="_8">入门 <span id="primary"></span></h2>
+<ul>
+<li>
+<p><a href="warmup/"><strong>热身</strong></a> - 入门热身示例</p>
+</li>
+<li>
+<p><a href="linear_regression/"><strong>线性回归</strong></a> - 基础线性回归模型</p>
+</li>
+<li>
+<p><a href="linear_regression_improved/"><strong>线性回归改进</strong></a> - 线性回归优化版本</p>
+</li>
+<li>
+<p><a href="linear_regression_fix/"><strong>线性回归修复</strong></a> - 修复偏置未更新bug</p>
+</li>
+<li>
+<p><a href="softmax_regression/"><strong>softmax回归</strong></a> - 多分类softmax回归</p>
+</li>
+<li>
+<p><a href="softmax_regression_improved/"><strong>线性回归和softmax回归改进</strong></a> - 回归算法改进</p>
+</li>
+<li>
+<p><a href="svm/"><strong>支持向量机</strong></a> - SVM分类算法</p>
+</li>
+<li>
+<p><a href="svm_improved/"><strong>支持向量机改进</strong></a> - SVM优化版本</p>
+</li>
+<li>
+<p><a href="simple_nn/"><strong>简单神经网络</strong></a> - 基础神经网络</p>
+</li>
+<li>
+<p><a href="CNN/"><strong>卷积神经网络</strong></a> - CNN基础实现</p>
+</li>
+<li>
+<p><a href="cnn_keras_sequential_improved/"><strong>卷积神经网络改进</strong></a> - CNN优化版本</p>
+</li>
+<li>
+<p><a href="RNN/"><strong>循环神经网络</strong></a> - RNN基础实现</p>
+</li>
+<li>
+<p><a href="poem_generation_rnn_improved/"><strong>循环神经网络改进</strong></a> - RNN优化版本</p>
+</li>
+<li>
+<p><a href="attention/"><strong>注意力机制</strong></a> - 注意力机制原理与实现</p>
+</li>
+<li>
+<p><a href="gaussian_mixture/"><strong>高斯混合</strong></a> - 高斯混合模型</p>
+</li>
+<li>
+<p><a href="chap11_gaussian_mixture/"><strong>高斯混合改进</strong></a> - 高斯混合优化</p>
+</li>
+<li>
+<p><a href="RBM/"><strong>受限玻尔兹曼机</strong></a> - RBM基础实现</p>
+</li>
+<li>
+<p><a href="RL/"><strong>强化学习</strong></a> - 强化学习基础</p>
+</li>
+<li>
+<p><a href="ant_robot/%E6%9C%BA%E5%99%A8%E4%BA%BA%E4%BB%BF%E7%9C%9F%E7%B3%BB%E7%BB%9F/"><strong>机器人仿真</strong></a> - MuJoCo机器人仿真</p>
+</li>
+</ul>
+<p><a href="rain_sensor_fusion/DEMO_REPORT/"><strong>基于深度学习置信度加权的自动驾驶雨天多传感器融合感知优化</strong></a></p>
+<hr />
+<h2 id="_9">感知 <span id="perception"></span></h2>
+<ul>
+<li>
+<p><a href="carla_CAM/"><strong>carla_CAM</strong></a> - 使用类激活映射测试卷积神经网络</p>
+</li>
+<li>
+<p><a href="carla_traffic_sign_recognition/carla_traffic_sign_recognition/"><strong>交通标识识别</strong></a> — 交通标识识别</p>
+</li>
+<li>
+<p><a href="edge_intelligence_V2X/"><strong>V2X路侧智能感知</strong></a> - 基于YOLOv8n的V2X路侧智能感知系统优化与实现</p>
+</li>
+<li>
+<p><a href="carla_auto_vision_navigator/"><strong>Carla多模态异常检测</strong></a> - 基于多模态融合的Carla非结构化场景异常检测自动驾驶</p>
+</li>
+<li>
+<p><a href="test/object_detection/"><strong>目标检测</strong></a> - 目标检测与危险评估</p>
+</li>
+<li>
+<p><a href="image_object_detection/image_object_detection/"><strong>图像目标检测</strong></a> - 多功能图像目标检测系统</p>
+</li>
+<li>
+<p><strong>跟踪</strong> - 目标跟踪</p>
+</li>
+<li>
+<p><a href="./test.md"><strong>路径追踪</strong></a> - 路径追踪测试</p>
+</li>
+<li>
+<p><a href="traffic_sign_detection/"><strong>交通标识检测</strong></a> - 交通标识目标检测</p>
+</li>
+<li>
+<p><a href="td3_carracing/"><strong>td3_carracing</strong></a> - 基于 TD3 + CNN 的强化学习自动驾驶系统</p>
+</li>
+<li>
+<p><a href="UVA_flight_control_system/"><strong>无人机飞行控制</strong></a> - 基于AirSim的无人机飞行控制系统</p>
+</li>
+<li>
+<p><a href="humanoid_balance/Humanoid_Balance/"><strong>人形机器人平衡控制</strong></a> - 基于强化学习的人形机器人平衡控制仿真</p>
+</li>
+<li>
+<p><a href="improve/project/"><strong>工程规范优化</strong></a> - 多场景仿真与控制优化项目</p>
+</li>
+<li>
+<p><a href="mujoco_man/mujoco_manrun/"><strong>人形机器人站立行走</strong></a> - 基于 CPG + PD 的人形机器人稳定站立与行走仿真（MuJoCo）</p>
+</li>
+<li>
+<p><a href="setup_tool/report/"><strong>setup_tool模块汇报文档</strong></a> - setup_tool 模块背景、改进内容、运行方式与效果总结</p>
+</li>
+<li>
+<p><a href="robot_arm/"><strong>机械臂自动抓取</strong></a> - 基于Franka Panda的机械臂自动抓取仿真项目</p>
+</li>
+</ul>
+<h2 id="_10">规划 <span id="planning"></span></h2>
+<p><a href="#navigation"><strong>导航</strong></a></p>
+<h2 id="_11">控制  <span id="control"></span></h2>
+<p><a href="#pid">PID</a>
+<a href="carla_imu/carla_imu/"><strong>CARLA IMU 数据采集平台</strong></a> — CARLA惯性测量单元数据采集与可视化驾驶平台开发汇报文档</p>
+<p><a href="#pid">PID</a></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="lane_detection/" class="btn btn-neutral float-right" title="车道线检测">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>OpenHUTB 版权所有 &copy; 2026</p>
   </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
-      
-    </div>
-    <div class="md-dialog" data-md-component="dialog">
-      <div class="md-dialog__inner md-typeset"></div>
-    </div>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/OpenHUTB/nn" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
     
     
     
-      
-      
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": [], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <span><a href="lane_detection/" style="color: #fcfcfc">Next &raquo;</a></span>
     
-    
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
-      
-    
-  </body>
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="extra.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
 </html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-06-11 09:36:05.591080+00:00
+-->
