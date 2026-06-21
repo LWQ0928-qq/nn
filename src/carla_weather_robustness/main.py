@@ -14,6 +14,7 @@ import cv2
 import json
 import logging
 import time
+import random
 import matplotlib
 matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
@@ -349,9 +350,19 @@ class PIDController:
 
 
 class WeatherRobustnessSystem:
-    """主系统：自动遍历7种天气，实时显示感知数据，输出鲁棒性评分报告"""
+    """主系统：自动遍历10种天气（随机顺序），实时显示感知数据，输出鲁棒性评分报告"""
 
-    def __init__(self):
+    def __init__(self, num_rounds=1, shuffle_weather=True, random_seed=None):
+        """
+        Args:
+            num_rounds: 测试轮数（默认1轮），多轮时每轮天气顺序随机，结果取平均
+            shuffle_weather: 是否随机打乱天气顺序
+            random_seed: 随机种子（固定种子可复现结果）
+        """
+        self.num_rounds = num_rounds
+        self.shuffle_weather = shuffle_weather
+        if random_seed is not None:
+            random.seed(random_seed)
         self.client = carla.Client(CARLA_HOST, CARLA_PORT)
         self.client.set_timeout(CARLA_TIMEOUT)
         self.world = self.vehicle = self.camera = self.lidar = None
@@ -367,6 +378,9 @@ class WeatherRobustnessSystem:
         self._is_transitioning = False  # 是否正在过渡
         self._is_stable = True  # 是否处于稳定期
         self._stable_steps = 0  # 稳定期步数计数
+        # 多轮累积统计
+        self._all_rounds_reports = []  # 存储每轮报告
+        self._weather_order_history = []  # 记录每轮天气顺序
 
     def connect(self):
         self.world = self.client.load_world(CARLA_MAP)
@@ -698,45 +712,156 @@ class WeatherRobustnessSystem:
         frame = cv2.GaussianBlur(frame, (7, 7), 0)
         return frame
 
+    def _run_single_round(self, weather_names_ordered, round_idx):
+        """运行单轮测试（指定天气顺序）"""
+        logger.info(f"\n{'='*50}\n  第 {round_idx+1}/{self.num_rounds} 轮测试开始\n  天气顺序: {' -> '.join(WEATHER_LABELS.get(n, n) for n in weather_names_ordered)}\n{'='*50}")
+        self._weather_order_history.append(weather_names_ordered)
+
+        # 重置评分器（每轮独立）
+        self.scorer = RobustnessScorer()
+
+        for weather_name in weather_names_ordered:
+            self.apply_weather(weather_name)
+            for step in range(STEPS_PER_WEATHER):
+                self.run_step(weather_name, step)
+                # 按Q可提前退出
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q') or key == ord('Q'):
+                    return False  # 提前退出
+        return True  # 正常完成
+
     def run(self):
         try:
             self.connect()
-            self.spawn_ego_vehicle()
 
-            for weather_name in WEATHER_NAMES:
-                self.apply_weather(weather_name)
-                for step in range(STEPS_PER_WEATHER):
-                    self.run_step(weather_name, step)
-                    # 按Q可提前退出
-                    key = cv2.waitKey(1) & 0xFF
-                    if key == ord('q') or key == ord('Q'):
-                        break
+            for round_idx in range(self.num_rounds):
+                # 每轮重新 spawn 车辆（避免上一轮碰撞影响）
+                if round_idx == 0:
+                    self.spawn_ego_vehicle()
                 else:
-                    continue
-                break
+                    # 清理上一轮传感器和车辆
+                    for sensor in [self.camera, self.lidar]:
+                        if sensor:
+                            sensor.stop()
+                            sensor.destroy()
+                    if self.vehicle:
+                        self.vehicle.destroy()
+                    self.spawn_ego_vehicle()
+                    # 重置内部状态
+                    self._camera_image = self._lidar_data = None
+                    self._current_weather_params = None
+                    self._target_weather_params = None
+                    self._transition_step = 0
+                    self._is_transitioning = False
+                    self._is_stable = True
+                    self._stable_steps = 0
 
-            report = self.scorer.generate_report()
-            print("\n" + "=" * 60)
-            print("  鲁棒性测试报告")
-            print("=" * 60)
-            for wname, score in report.items():
-                if wname == "__overall__":
-                    print(f"\n  >>> 总体鲁棒性评分: {score:.1f}/100 <<<")
+                # 生成本轮天气顺序
+                if self.shuffle_weather:
+                    weather_order = list(WEATHER_NAMES)
+                    random.shuffle(weather_order)
                 else:
-                    print(f"\n  [{WEATHER_LABELS.get(wname, wname)}] {wname}:")
-                    print(f"    评分={score['score']:.1f}, 碰撞={score['collisions']}, 碰撞率={score['collision_rate']:.3f}")
-                    print(f"    图像质量={score['avg_image_quality']:.2f}, LiDAR主导比例={score['lidar_dominant_ratio']:.2f}")
-                    if "detection_rate" in score:
-                        print(f"    检测率={score['detection_rate']:.3f}, 平均检测距离={score['avg_detection_dist']:.1f}m")
-            print("\n" + "=" * 60)
+                    weather_order = list(WEATHER_NAMES)
 
-            # 生成多天气对比柱状图
-            self._plot_comparison_chart(report)
+                completed = self._run_single_round(weather_order, round_idx)
+                report = self.scorer.generate_report()
+                self._all_rounds_reports.append(report)
+
+                # 打印单轮报告
+                self._print_report(report, round_idx)
+
+                if not completed:
+                    logger.info(f"第 {round_idx+1} 轮被用户中断")
+                    break
+
+            # 汇总多轮结果
+            if len(self._all_rounds_reports) > 1:
+                self._print_multi_round_summary()
+
+            # 生成图表
+            if len(self._all_rounds_reports) == 1:
+                self._plot_comparison_chart(self._all_rounds_reports[0])
+            else:
+                self._plot_multi_round_chart()
 
         except KeyboardInterrupt:
             logger.info("用户中断")
         finally:
             self.cleanup()
+
+    def _print_report(self, report, round_idx):
+        """打印单轮测试报告"""
+        round_label = f"第{round_idx+1}轮" if self.num_rounds > 1 else ""
+        print("\n" + "=" * 60)
+        print(f"  鲁棒性测试报告 {round_label}")
+        print("=" * 60)
+        for wname, score in report.items():
+            if wname == "__overall__":
+                print(f"\n  >>> 总体鲁棒性评分: {score:.1f}/100 <<<")
+            else:
+                print(f"\n  [{WEATHER_LABELS.get(wname, wname)}] {wname}:")
+                print(f"    评分={score['score']:.1f}, 碰撞={score['collisions']}, 碰撞率={score['collision_rate']:.3f}")
+                print(f"    图像质量={score['avg_image_quality']:.2f}, LiDAR主导比例={score['lidar_dominant_ratio']:.2f}")
+                if "detection_rate" in score:
+                    print(f"    检测率={score['detection_rate']:.3f}, 平均检测距离={score['avg_detection_dist']:.1f}m")
+        print("\n" + "=" * 60)
+
+    def _compute_multi_round_average(self):
+        """计算多轮平均值"""
+        avg = {}
+        all_overalls = []
+        # 以天气名称为 key 汇总
+        weather_accum = {wn: {"scores": [], "collisions": [], "collision_rates": [],
+                              "img_qualities": [], "lidar_ratios": [], "detection_rates": [],
+                              "detection_dists": []} for wn in WEATHER_NAMES}
+        for report in self._all_rounds_reports:
+            all_overalls.append(report.get("__overall__", 0))
+            for wn in WEATHER_NAMES:
+                if wn in report:
+                    s = report[wn]
+                    weather_accum[wn]["scores"].append(s["score"])
+                    weather_accum[wn]["collisions"].append(s["collisions"])
+                    weather_accum[wn]["collision_rates"].append(s["collision_rate"])
+                    weather_accum[wn]["img_qualities"].append(s["avg_image_quality"])
+                    weather_accum[wn]["lidar_ratios"].append(s["lidar_dominant_ratio"])
+                    weather_accum[wn]["detection_rates"].append(s.get("detection_rate", 0))
+                    weather_accum[wn]["detection_dists"].append(s.get("avg_detection_dist", 0))
+
+        for wn in WEATHER_NAMES:
+            acc = weather_accum[wn]
+            avg[wn] = {
+                "score": np.mean(acc["scores"]) if acc["scores"] else 0,
+                "score_std": np.std(acc["scores"]) if len(acc["scores"]) > 1 else 0,
+                "collisions": np.mean(acc["collisions"]) if acc["collisions"] else 0,
+                "collision_rate": np.mean(acc["collision_rates"]) if acc["collision_rates"] else 0,
+                "avg_image_quality": np.mean(acc["img_qualities"]) if acc["img_qualities"] else 0,
+                "lidar_dominant_ratio": np.mean(acc["lidar_ratios"]) if acc["lidar_ratios"] else 0,
+                "detection_rate": np.mean(acc["detection_rates"]) if acc["detection_rates"] else 0,
+                "avg_detection_dist": np.mean(acc["detection_dists"]) if acc["detection_dists"] else 0,
+            }
+        avg["__overall__"] = np.mean(all_overalls) if all_overalls else 0
+        avg["__overall_std__"] = np.std(all_overalls) if len(all_overalls) > 1 else 0
+        avg["__num_rounds__"] = len(self._all_rounds_reports)
+        return avg
+
+    def _print_multi_round_summary(self):
+        """打印多轮汇总报告"""
+        avg = self._compute_multi_round_average()
+        print("\n" + "=" * 70)
+        print(f"  多轮测试汇总报告（共 {avg['__num_rounds__']} 轮，随机天气顺序）")
+        print("=" * 70)
+        print(f"\n  天气顺序历史:")
+        for i, order in enumerate(self._weather_order_history):
+            names = [WEATHER_LABELS.get(n, n) for n in order]
+            print(f"    第{i+1}轮: {' -> '.join(names)}")
+        print(f"\n  >>> 综合鲁棒性评分: {avg['__overall__']:.1f} ± {avg['__overall_std__']:.1f} /100 <<<")
+        for wn in WEATHER_NAMES:
+            s = avg[wn]
+            print(f"\n  [{WEATHER_LABELS.get(wn, wn)}] {wn}:")
+            print(f"    评分={s['score']:.1f}±{s['score_std']:.1f}, 碰撞={s['collisions']:.1f}, 碰撞率={s['collision_rate']:.3f}")
+            print(f"    图像质量={s['avg_image_quality']:.2f}, LiDAR主导比例={s['lidar_dominant_ratio']:.2f}")
+            print(f"    检测率={s['detection_rate']:.3f}, 平均检测距离={s['avg_detection_dist']:.1f}m")
+        print("\n" + "=" * 70)
 
     def _plot_comparison_chart(self, report):
         """生成多天气对比柱状图"""
@@ -866,5 +991,82 @@ class WeatherRobustnessSystem:
         logger.info("资源已清理")
 
 
+    def _plot_multi_round_chart(self):
+        """生成多轮平均对比柱状图（带误差线）"""
+        avg = self._compute_multi_round_average()
+        weather_names = [n for n in WEATHER_NAMES if n in avg]
+        if not weather_names:
+            return
+
+        labels = [WEATHER_LABELS.get(n, n) for n in weather_names]
+        scores = [avg[n]["score"] for n in weather_names]
+        score_stds = [avg[n]["score_std"] for n in weather_names]
+        img_qualities = [avg[n]["avg_image_quality"] for n in weather_names]
+        detection_rates = [avg[n]["detection_rate"] for n in weather_names]
+        overall = avg["__overall__"]
+        overall_std = avg["__overall_std__"]
+        num_rounds = avg["__num_rounds__"]
+
+        colors = ["#2ecc71", "#3498db", "#f39c12", "#e74c3c", "#9b59b6", "#1abc9c", "#e67e22",
+                  "#c0392b", "#8e44ad", "#d4ac0d"]
+
+        fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+        fig.suptitle(f"CARLA Weather Robustness Comparison ({num_rounds} Rounds, Random Order)\n"
+                     f"Overall: {overall:.1f} ± {overall_std:.1f} /100",
+                     fontsize=14, fontweight="bold")
+
+        # 1. 鲁棒性评分（带误差线）
+        ax = axes[0, 0]
+        bars = ax.bar(labels, scores, yerr=score_stds, color=colors[:len(labels)], edgecolor="white",
+                      capsize=5, error_kw={"linewidth": 1.5})
+        ax.set_title(f"Robustness Score (avg of {num_rounds} rounds)")
+        ax.set_ylabel("Score / 100")
+        ax.set_ylim(0, 100)
+        for bar, v, s in zip(bars, scores, score_stds):
+            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + s + 1,
+                    f"{v:.0f}", ha="center", fontsize=9)
+        ax.tick_params(axis="x", rotation=30)
+
+        # 2. 图像质量
+        ax = axes[0, 1]
+        bars = ax.bar(labels, img_qualities, color=colors[:len(labels)], edgecolor="white")
+        ax.set_title("Avg Image Quality")
+        ax.set_ylabel("Score")
+        ax.set_ylim(0, 1)
+        for bar, v in zip(bars, img_qualities):
+            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01, f"{v:.2f}", ha="center", fontsize=9)
+        ax.tick_params(axis="x", rotation=30)
+
+        # 3. 障碍物检测率
+        ax = axes[1, 0]
+        bars = ax.bar(labels, detection_rates, color=colors[:len(labels)], edgecolor="white")
+        ax.set_title("Obstacle Detection Rate")
+        ax.set_ylabel("Rate")
+        ax.set_ylim(0, 1)
+        for bar, v in zip(bars, detection_rates):
+            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
+                    f"{v*100:.0f}%", ha="center", fontsize=9)
+        ax.tick_params(axis="x", rotation=30)
+
+        # 4. 天气顺序历史
+        ax = axes[1, 1]
+        ax.axis("off")
+        ax.set_title("Weather Order History", fontweight="bold")
+        history_text = ""
+        for i, order in enumerate(self._weather_order_history):
+            names = [WEATHER_LABELS.get(n, n) for n in order]
+            history_text += f"Round {i+1}:\n"
+            for j, n in enumerate(names):
+                history_text += f"  {j+1}. {n}\n"
+            history_text += "\n"
+        ax.text(0, 1, history_text.strip(), transform=ax.transAxes, fontsize=9,
+                verticalalignment="top", fontfamily="monospace",
+                bbox=dict(boxstyle="round,pad=0.5", facecolor="#f5f5f5", edgecolor="#ccc"))
+
+        plt.tight_layout()
+        plt.subplots_adjust(top=0.9)
+        plt.show()
+
+
 if __name__ == "__main__":
-    WeatherRobustnessSystem().run()
+    WeatherRobustnessSystem(num_rounds=2, shuffle_weather=True).run()
