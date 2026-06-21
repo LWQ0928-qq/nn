@@ -188,6 +188,8 @@ title: 主页
 
 - __跟踪__ - 目标跟踪
 
+- [__雨天条件下的自动驾驶车辆__](./carla_3D_object_fusion_detect/README.md) - 雨天多传感器自动驾驶仿真数据采集系统项目
+
 - [__路径追踪__](./test.md) - 路径追踪测试
 
 - [__交通标识检测__](./traffic_sign_detection/README.md) - 交通标识目标检测
@@ -205,8 +207,6 @@ title: 主页
 - [__setup_tool模块汇报文档__](./setup_tool/report.md) - setup_tool 模块背景、改进内容、运行方式与效果总结
 
 - [__机械臂自动抓取__](./robot_arm/README.md) - 基于Franka Panda的机械臂自动抓取仿真项目
-
-
 
 
 
