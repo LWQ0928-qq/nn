@@ -7,6 +7,10 @@
 
 # 导入 time 模块，用于延时操作
 import time
+# 导入 signal 模块，用于注册退出信号处理器
+import signal
+# 导入 sys 模块，用于系统退出
+import sys
 
 # 从 drone_controller 模块导入无人机控制器
 from drone_controller import DroneController
@@ -16,6 +20,17 @@ from flight_path import FlightPath
 
 # 从 utils 模块导入分隔线打印函数
 from utils import print_separator
+
+# 全局变量，用于信号处理器访问 drone 实例
+_global_drone = None
+
+
+def _signal_handler(signum, frame):
+    """信号处理器，安全退出程序"""
+    print(f"\n\n⚠️  收到退出信号 ({signum})，正在安全降落...")
+    if _global_drone is not None:
+        _global_drone.emergency_stop()
+    sys.exit(0)
 
 
 def auto_flight_mode(drone):
@@ -42,21 +57,33 @@ def auto_flight_mode(drone):
 
    # 使用 FlightPath 中定义的三角形路径
     waypoints = FlightPath.triangle_path(size=15, height=-5)
+   
+   # ===== 新增：任务总览 =====
+    total = len(waypoints)
+    print(f"\n📋 任务总览:")
+    print(f"   总航点数: {total}")
+    for idx, (x, y, z) in enumerate(waypoints, 1):
+        print(f"   航点{idx}: ({x:.1f}, {y:.1f}, {z:.1f})")
+    print(f"{'=' * 40}\n")
 
     # 打印飞行路径信息
     FlightPath.print_path(waypoints)
 
     # ===== 执行飞行任务阶段 =====
     manual_takeover = False
+    completed = 0  # 新增：已完成的航点数量
 
     for i, (x, y, z) in enumerate(waypoints, 1):
+        remaining = total - i
         print(f"\n{'=' * 40}")
-        print(f"第 {i} 段飞行 -> 目标: ({x}, {y}, {z})")
+        print(f"📍 航点 {i}/{total} -> ({x}, {y}, {z})")
+        print(f"   剩余: {remaining} 个航点 | 已完成: {completed} 个")
         print(f"{'=' * 40}")
 
         # 飞向当前航点，速度 3 m/s
         success = drone.fly_to_position(x, y, z, velocity=3)
-
+        print(f"📍 飞行结果: {'✅ 成功' if success else '❌ 失败'}")
+        
         if not success:
             # 发生碰撞，尝试自动恢复
             print("\n⚠️  检测到碰撞，开始自动恢复...")
@@ -88,7 +115,8 @@ def auto_flight_mode(drone):
                     break
 
         # 到达航点后拍照
-        print(f"\n📷 航点 {i} 拍照...")
+        completed += 1  # 新增：完成计数
+        print(f"\n📷 航点 {i} 拍照... (进度: {completed}/{total})")
         drone.capture_image()
 
         time.sleep(1)
@@ -164,8 +192,15 @@ def keyboard_control_mode(drone):
 
 def main():
     """主函数，程序入口"""
+    global _global_drone
+
+    # 注册信号处理器（支持 Ctrl+C 和终止信号）
+    signal.signal(signal.SIGINT, _signal_handler)
+    signal.signal(signal.SIGTERM, _signal_handler)
+
     # 创建无人机控制器实例
     drone = DroneController()
+    _global_drone = drone
 
     try:
         # 选择飞行模式
